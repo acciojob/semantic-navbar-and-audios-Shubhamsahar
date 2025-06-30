@@ -1,1 +1,33 @@
 //your code here
+const baseUrl = "http://localhost:3000"; // Make sure this is correct
+
+describe("Semantic Navbar & Audios", () => {
+  beforeEach(() => {
+    cy.visit(baseUrl + "/main.html"); // Change to your actual HTML file path
+  });
+
+  it("3 audios with heading are there", () => {
+    cy.contains('3 random audios');
+    cy.get('audio').should(($audios) => {
+      expect($audios).to.have.length(3);
+      $audios.each((index, audio) => {
+        expect(audio).to.have.property('controls'); // Check for controls on each audio
+      });
+      const srcs = $audios.map((i, el) => Cypress.$(el).find('source').attr('src'));
+      expect(srcs.get()).to.deep.eq([
+        'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3',
+        'http://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg',
+        'http://codeskulptor-demos.commondatastorage.googleapis.com/pang/paza-moduless.mp3'
+      ]);
+    });
+  });
+
+  it("Nav is made up of semantic tags", () => {
+    cy.get('nav').within(() => {
+      cy.get('ul').within(() => {
+        cy.get('li').should('have.length', 3);
+        cy.get('a').should('have.length', 3);
+      });
+    });
+  });
+});
